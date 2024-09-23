@@ -1,56 +1,45 @@
 package generator;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
 public class GenerateInfoFiles {
-	
-	private final static String[] DEMO_FIRST_NAMES = {"Nombre1", "Nombre2", "Nombre3"}; 
-	private final static String[] DEMO_LAST_NAMES = {"Apellido1", "Apellido2", "Apellido3"}; 
+	public static void createSalesmenFile(int randomSalesCount, String name, long id) throws IOException {
+		try (FileWriter writer = new FileWriter("salesman_" + id + ".txt")) {
+			Random random = new Random();
+			for (int i = 0; i < randomSalesCount; i++) {
+				writer.write("Product" + (i + 1) + ";" + (random.nextInt(100) + 1) + "\n");
+			}
+		}
+	}
 
-	private final static String FOLDER_PATH = "sales_reports";
-    public static void main(String[] args) {
-        // Sets up a directory for the sales reports 
-        
-        File folder = new File(FOLDER_PATH);
-        if (!folder.exists()) {
-            if (folder.mkdir()) {
-                System.out.println("Created new folder: " + FOLDER_PATH);
-            } else {
-                System.out.println("Error attempting to save sales reports files at: " + FOLDER_PATH);
-                return;
-            }
-        }
+	public static void createProductsFile(int productsCount) throws IOException {
+		try (FileWriter writer = new FileWriter("products.txt")) {
+			Random random = new Random();
+			for (int i = 0; i < productsCount; i++) {
+				writer.write(
+						"Product" + (i + 1) + ";Product Name " + (i + 1) + ";" + (random.nextDouble() * 100) + "\n");
+			}
+		}
+	}
 
-        // Generates 3 pseudorandom file texts.
-        for (int i = 1; i <= 3; i++) {
-        	createSalesMenFile(FOLDER_PATH + "/sales_report_" + i + ".txt");
-        }
-    }
+	public static void createSalesmanInfoFile(int salesmanCount) throws IOException {
+		try (FileWriter writer = new FileWriter("salesmen_info.txt")) {
+			for (int i = 0; i < salesmanCount; i++) {
+				writer.write(
+						"ID" + (i + 1) + ";Document" + (i + 1) + ";FirstName" + (i + 1) + ";LastName" + (i + 1) + "\n");
+			}
+		}
+	}
 
-    private static void createSalesMen( int randomSalesCount, String name, long id) {
-        Random random = new Random();
-
-        // 
-        String vendorDocType = "CC";
-        String vendorDocNumber = String.format("%08d", random.nextInt(100000000));
-
-        StringBuilder data = new StringBuilder();
-        data.append(vendorDocType).append(";").append(vendorDocNumber).append("\n");
-
-        for (int i = 1; i <= 3; i++) {
-            String productID = "PROD" + i;
-            int quantitySold = random.nextInt(100) + 1;  
-            data.append(productID).append(";").append(quantitySold).append("\n");
-        }
-
-        try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write(data.toString());
-            System.out.println("Archivo generado: " + filePath);
-        } catch (IOException e) {
-            System.out.println("Ocurrió un error al generar el archivo: " + e.getMessage());
-        }
-    }
+	public static void main(String[] args) {
+		try {
+			createSalesmenFile(5, "John Doe", 123456);
+			createProductsFile(10);
+			createSalesmanInfoFile(3);
+		} catch (IOException e) {
+			System.err.println("Error generating files: " + e.getMessage());
+		}
+	}
 }
